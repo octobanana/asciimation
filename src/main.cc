@@ -67,6 +67,7 @@ int program_options(Parg& pg)
   pg.set("debug", "show debug output");
   pg.set("width,w", "80", "int", "set the minimum screen width");
   pg.set("height,h", "20", "int", "set the minimum screen height");
+  pg.set("loop,l", "set the animation to loop");
 
   // pg.set_pos();
   // pg.set_stdin();
@@ -143,6 +144,7 @@ int main(int argc, char *argv[])
 
   OB::Asciimation am;
   am.set_debug(pg.get<bool>("debug"));
+  am.set_loop(pg.get<bool>("loop"));
   am.set_delay(pg.get<int>("time"));
   am.set_delim(pg.get("delim"));
   cursor_hide();

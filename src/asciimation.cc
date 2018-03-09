@@ -29,6 +29,12 @@ Asciimation& Asciimation::set_debug(bool debug)
   return *this;
 }
 
+Asciimation& Asciimation::set_loop(bool loop)
+{
+  loop_ = loop;
+  return *this;
+}
+
 Asciimation& Asciimation::set_delay(int delay)
 {
   delay_ = delay;
@@ -54,28 +60,33 @@ void Asciimation::run(std::string file_name)
     (std::istreambuf_iterator<char>()));
   ifile.close();
 
-  size_t n {0};
   auto frames = delimit(content, delim_);
-  for (auto const& e : frames)
-  {
-    ++n;
-    std::cout
-    << Cl::c_h
-    << Cl::e_d;
-    if (debug_)
-    {
-      std::cout << n << "\n\n";
-    }
-    else
-    {
-      std::cout << "\n";
-    }
-    std::cout
-    << e
-    << std::endl;
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(delay_));
+  do
+  {
+    size_t n {0};
+    for (auto const& e : frames)
+    {
+      ++n;
+      std::cout
+      << Cl::c_h
+      << Cl::e_d;
+      if (debug_)
+      {
+        std::cout << n << "\n\n";
+      }
+      else
+      {
+        std::cout << "\n";
+      }
+      std::cout
+      << e
+      << std::endl;
+
+      std::this_thread::sleep_for(std::chrono::milliseconds(delay_));
+    }
   }
+  while (loop_);
 }
 
 std::vector<std::string> Asciimation::delimit(std::string const& str, std::string const delim)

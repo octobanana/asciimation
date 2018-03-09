@@ -17,12 +17,14 @@ public:
   ~Asciimation();
 
   Asciimation& set_debug(bool debug);
+  Asciimation& set_loop(bool loop);
   Asciimation& set_delay(int delay);
   Asciimation& set_delim(std::string delim);
   void run(std::string file_name);
 
 private:
   bool debug_ {false};
+  bool loop_ {false};
   int delay_ {250};
   std::string delim_ {"END"};
 
