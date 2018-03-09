@@ -33,6 +33,9 @@ namespace Color
   std::string const c_f {"\033[0C"};
   std::string const c_b {"\033[0D"};
 
+  std::string const c_hide {"\033[?25l"};
+  std::string const c_show {"\033[?25h"};
+
   std::string const fg_black {"\033[30m"};
   std::string const fg_red {"\033[31m"};
   std::string const fg_green {"\033[32m"};

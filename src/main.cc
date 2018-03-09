@@ -1,4 +1,5 @@
 #include "asciimation.hh"
+#include "term.hh"
 
 #include "parg.hh"
 using Parg = OB::Parg;
@@ -6,10 +7,7 @@ using Parg = OB::Parg;
 #include <string>
 #include <sstream>
 #include <iostream>
-#include <fstream>
 #include <vector>
-#include <chrono>
-#include <thread>
 
 int program_options(Parg& pg);
 
@@ -32,7 +30,11 @@ int program_options(Parg& pg)
   pg.set("help,h", "print the help output");
   pg.set("version,v", "print the program version");
   pg.set("file,f", "", "file_name", "the input file");
-  pg.set("delimiter,d", "END", "str", "the frame delimiter");
+  pg.set("delim,d", "END", "str", "the frame delimiter");
+  pg.set("time,t", "250", "int", "the time delay between frames in milliseconds");
+  pg.set("debug", "show debug output");
+  pg.set("width,w", "80", "int", "set the minimum screen width");
+  pg.set("height,h", "20", "int", "set the minimum screen height");
 
   // pg.set_pos();
   // pg.set_stdin();
@@ -70,6 +72,28 @@ int main(int argc, char *argv[])
   int pstatus {program_options(pg)};
   if (pstatus > 0) return 0;
   if (pstatus < 0) return 1;
+
+  size_t twidth {0};
+  size_t theight {0};
+  OB::Term::size(twidth, theight);
+
+  if (pg.get<size_t>("width") > twidth)
+  {
+    std::cerr << "Error: screen width is too small" << std::endl;
+    return 1;
+  }
+
+  if (pg.get<size_t>("height") > theight)
+  {
+    std::cerr << "Error: screen height is too small" << std::endl;
+    return 1;
+  }
+
+  OB::Asciimation am;
+  am.set_debug(pg.get<bool>("debug"));
+  am.set_delay(pg.get<int>("time"));
+  am.set_delim(pg.get("delim"));
+  am.run(pg.get("file"));
 
   return 0;
 }

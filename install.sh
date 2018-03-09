@@ -17,9 +17,6 @@ fi
 # source environment variables
 source ./env.sh
 
-# config file
-cp -n ./config/m8.json ~/.m8.json
-
 if [[ ${BUILD_TYPE} == "Debug" ]]; then
   ./build.sh -d
   cd build/debug
