@@ -17,20 +17,10 @@ namespace OB
 
 Asciimation::Asciimation()
 {
-  std::cout
-  << Cl::c_hide
-  << Cl::c_h
-  << Cl::e_d
-  << std::endl;
 }
 
 Asciimation::~Asciimation()
 {
-  std::cout
-  << Cl::c_h
-  << Cl::e_d
-  << Cl::c_show
-  << std::endl;
 }
 
 Asciimation& Asciimation::set_debug(bool debug)

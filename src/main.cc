@@ -4,12 +4,44 @@
 #include "parg.hh"
 using Parg = OB::Parg;
 
+#include "color.hh"
+namespace Cl = OB::Color;
+
 #include <string>
 #include <sstream>
 #include <iostream>
 #include <vector>
+#include <csignal>
 
 int program_options(Parg& pg);
+void clean_shutdown();
+void cb_signal(int signal);
+void register_signals();
+void cursor_hide();
+void cursor_show();
+
+void clean_shutdown()
+{
+  cursor_show();
+}
+
+void cb_signal(int signal)
+{
+  std::cerr << "Signal: " << signal << " Received" << '\n';
+  clean_shutdown();
+  exit(1);
+}
+
+void register_signals()
+{
+  std::signal(SIGINT, cb_signal);
+  std::signal(SIGABRT, cb_signal);
+  std::signal(SIGFPE, cb_signal);
+  std::signal(SIGILL, cb_signal);
+  std::signal(SIGINT, cb_signal);
+  std::signal(SIGSEGV, cb_signal);
+  std::signal(SIGTERM, cb_signal);
+}
 
 int program_options(Parg& pg)
 {
@@ -66,12 +98,32 @@ int program_options(Parg& pg)
   return 0;
 }
 
+void cursor_hide()
+{
+  std::cout
+  << Cl::c_hide
+  << Cl::c_h
+  << Cl::e_d
+  << std::endl;
+}
+
+void cursor_show()
+{
+  std::cout
+  << Cl::c_h
+  << Cl::e_d
+  << Cl::c_show
+  << std::endl;
+}
+
 int main(int argc, char *argv[])
 {
   Parg pg {argc, argv};
   int pstatus {program_options(pg)};
   if (pstatus > 0) return 0;
   if (pstatus < 0) return 1;
+
+  register_signals();
 
   size_t twidth {0};
   size_t theight {0};
@@ -93,7 +145,9 @@ int main(int argc, char *argv[])
   am.set_debug(pg.get<bool>("debug"));
   am.set_delay(pg.get<int>("time"));
   am.set_delim(pg.get("delim"));
+  cursor_hide();
   am.run(pg.get("file"));
+  cursor_show();
 
   return 0;
 }
