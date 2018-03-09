@@ -1,5 +1,6 @@
 # Asciimation
 ASCII animations for the terminal.  
+Reads a file filled with ascii animation frames, and outputs each frame with a configurable time delay to stdout.  
 
 ## Build
 Environment:  
