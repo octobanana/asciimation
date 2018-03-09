@@ -16,12 +16,12 @@ int program_options(Parg& pg)
   pg.name("asciimation").version("0.1.0 (08.03.2018)");
   pg.description("ascii animations for the terminal");
   pg.usage("[flags] [options] [--] [arguments]");
-  pg.usage("[-f 'input_file'] [-d 'delim']");
+  pg.usage("[-f 'input_file'] [-d 'delim'] [-t time_delay] [-w min_width] [-h min_height] [--debug]");
   pg.usage("[-v|--version]");
   pg.usage("[-h|--help]");
   pg.info("Exit Codes", {"0 -> normal", "1 -> error"});
   pg.info("Examples", {
-    "asciimation -f 'test' -d 'END'",
+    "asciimation -f 'test' -d 'END' -t 80",
     "asciimation --help",
     "asciimation --version",
   });
