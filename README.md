@@ -1,7 +1,10 @@
 # Asciimation
 An ASCII animation interpreter for the terminal.  
+
+![asciimation example](https://raw.githubusercontent.com/octobanana/asciimation/master/assets/octo.gif)
+
 Asciimation is like the flipbooks where one draws a single frame per page, and flips through it to create an animation.  
-The interpreter reads a file filled with ascii animation frames. Each frame is seperated by a newline with a special delimiter on it. The default delimiter is the word `END`. It then outputs each frame with a configurable time delay to stdout, clearing the screen between each frame. It default to playing the animation once, but can be set to loop.  
+The interpreter reads a file filled with ascii animation frames. Each frame is seperated by a newline with a special delimiter on it. The default delimiter is the word `END`. It then outputs each frame with a configurable time delay to stdout, clearing the screen between each frame. It defaults to playing the animation once, but can be set to loop.  
 
 ## Build
 Environment:  
