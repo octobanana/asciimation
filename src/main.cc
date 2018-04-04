@@ -1,33 +1,29 @@
 #include "asciimation.hh"
-#include "term.hh"
 
 #include "parg.hh"
 using Parg = OB::Parg;
 
-#include "color.hh"
-namespace Cl = OB::Color;
+#include "ansi_escape_codes.hh"
+namespace AEC = OB::ANSI_Escape_Codes;
 
 #include <string>
-#include <sstream>
 #include <iostream>
-#include <vector>
 #include <csignal>
 
-int program_options(Parg& pg);
 void clean_shutdown();
 void cb_signal(int signal);
 void register_signals();
-void cursor_hide();
-void cursor_show();
+int program_options(Parg& pg);
 
 void clean_shutdown()
 {
-  cursor_show();
+  std::cout << AEC::cursor_show << std::flush;
 }
 
 void cb_signal(int signal)
 {
-  std::cerr << "Signal: " << signal << " Received" << '\n';
+  std::cerr << "\nSignal: " << signal << " Received" << "\n";
+  std::cerr << "Exiting\n";
   clean_shutdown();
   exit(1);
 }
@@ -45,15 +41,25 @@ void register_signals()
 
 int program_options(Parg& pg)
 {
-  pg.name("asciimation").version("0.1.0 (08.03.2018)");
-  pg.description("ascii animations for the terminal");
+  pg.name("asciimation").version("0.4.0 (03.04.2018)");
+  pg.description("ascii animation interpreter");
   pg.usage("[flags] [options] [--] [arguments]");
-  pg.usage("[-f 'input_file'] [-d 'delim'] [-t time_delay] [-w min_width] [-h min_height] [--debug]");
+  pg.usage("[-f|--file input_file] [-d|--delim delim] [-t|--time time_delay_ms] [-l|--loop loop_number] [--debug]");
   pg.usage("[-v|--version]");
   pg.usage("[-h|--help]");
+  pg.info("Runtime Keybindings", {
+    "h -> show the help text",
+    "q -> quit the asciimation",
+    "d -> toggle debug output",
+    "j -> decrease speed by 5",
+    "J -> decrease speed by 50",
+    "k -> increase speed by 5",
+    "K -> increase speed by 50",
+    "space -> pause the animation",
+  });
   pg.info("Exit Codes", {"0 -> normal", "1 -> error"});
   pg.info("Examples", {
-    "asciimation -f 'test' -d 'END' -t 80",
+    "asciimation -f './test' -d 'END' -t 80 -l 3",
     "asciimation --help",
     "asciimation --version",
   });
@@ -61,19 +67,14 @@ int program_options(Parg& pg)
 
   pg.set("help,h", "print the help output");
   pg.set("version,v", "print the program version");
+
   pg.set("file,f", "", "file_name", "the input file");
   pg.set("delim,d", "END", "str", "the frame delimiter");
   pg.set("time,t", "250", "int", "the time delay between frames in milliseconds");
   pg.set("debug", "show debug output");
-  pg.set("width,w", "80", "int", "set the minimum screen width");
-  pg.set("height,h", "20", "int", "set the minimum screen height");
-  pg.set("loop,l", "set the animation to loop");
-
-  // pg.set_pos();
-  // pg.set_stdin();
+  pg.set("loop,l", "0", "int", "set the animation to loop n times, if n is 0, it will loop infinitely");
 
   int status {pg.parse()};
-  // uncomment if at least one argument is expected
   if (status > 0 && pg.get_stdin().empty())
   {
     std::cout << pg.print_help() << "\n";
@@ -99,24 +100,6 @@ int program_options(Parg& pg)
   return 0;
 }
 
-void cursor_hide()
-{
-  std::cout
-  << Cl::c_hide
-  << Cl::c_h
-  << Cl::e_d
-  << std::endl;
-}
-
-void cursor_show()
-{
-  std::cout
-  << Cl::c_h
-  << Cl::e_d
-  << Cl::c_show
-  << std::endl;
-}
-
 int main(int argc, char *argv[])
 {
   Parg pg {argc, argv};
@@ -126,30 +109,20 @@ int main(int argc, char *argv[])
 
   register_signals();
 
-  size_t twidth {0};
-  size_t theight {0};
-  OB::Term::size(twidth, theight);
-
-  if (pg.get<size_t>("width") > twidth)
+  try
   {
-    std::cerr << "Error: screen width is too small" << std::endl;
+    OB::Asciimation am;
+    am.set_debug(pg.get<bool>("debug"));
+    am.set_loop(pg.get<size_t>("loop"));
+    am.set_delay(pg.get<size_t>("time"));
+    am.set_delim(pg.get("delim"));
+    am.run(pg.get("file"));
+  }
+  catch (std::exception const& e)
+  {
+    std::cerr << "Error: " << e.what() << "\n";
     return 1;
   }
-
-  if (pg.get<size_t>("height") > theight)
-  {
-    std::cerr << "Error: screen height is too small" << std::endl;
-    return 1;
-  }
-
-  OB::Asciimation am;
-  am.set_debug(pg.get<bool>("debug"));
-  am.set_loop(pg.get<bool>("loop"));
-  am.set_delay(pg.get<int>("time"));
-  am.set_delim(pg.get("delim"));
-  cursor_hide();
-  am.run(pg.get("file"));
-  cursor_show();
 
   return 0;
 }
