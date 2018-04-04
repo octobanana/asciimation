@@ -1,9 +1,11 @@
 # Asciimation
 An ASCII animation interpreter for the terminal.  
 
-![asciimation example](https://raw.githubusercontent.com/octobanana/asciimation/master/assets/octo.gif)
+![asciimation plane example](https://raw.githubusercontent.com/octobanana/asciimation/master/assets/asciimation.gif)
 
 Asciimation is like the flipbooks where one draws a single frame per page, and flips through it to create an animation.  
+
+![asciimation simple example](https://raw.githubusercontent.com/octobanana/asciimation/master/assets/octo.gif)
 
 The above asciimation is created from the following file contents:  
 
