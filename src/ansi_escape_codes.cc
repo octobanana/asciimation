@@ -123,7 +123,7 @@ namespace ANSI_Escape_Codes
     std::string h2 {x.substr(2, 2)};
     std::string h3 {x.substr(4, 2)};
     std::stringstream ss; ss
-    << esc << "38;2;"
+    << esc << "48;2;"
     << htoi(h1) << ";"
     << htoi(h2) << ";"
     << htoi(h3) << "m";
